@@ -12,7 +12,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            /* height: 100vh; */
             margin: 0;
         }
 
@@ -23,6 +23,13 @@
             border: 1px solid #e1e4e8;
             border-radius: 10px;
             width: 300px;
+        }
+
+        .container1 {
+            padding: 20px;
+            border: 1px solid #e1e4e8;
+            border-radius: 10px;
+            width: 90%;
         }
 
         h1 {
@@ -75,29 +82,148 @@
             max-height: 200px;
             overflow-y: auto;
         }
+
+        code {
+            font-family: "Courier New", Courier, monospace;
+        }
     </style>
 </head>
 
 <body>
-    <div class="container" id="loginContainer">    
-        <img src="./logoAGA.png" width="300px">    
-        <div class="input-field">
-            <label for="username">Usuario</label>
-            <input id="username" type="text">
+    <div class="container1">
+        <h1>AGA <img src="./aga.ico" alt="aga"> AUTH</h1>
+
+        <h2>Sistema de Autenticación Centralizada de la UHO</h2>
+        <p>El Sistema de Autenticación Centralizada (<strong>AGA_AUTH</strong>) permite que todas las aplicaciones y
+            sistemas desarrollados e implementados en la Universidad de Holguín (UHO) utilicen un registro único de
+            usuarios. Esto garantiza una uniformidad en el uso de credenciales y mejora la seguridad de los datos
+            personales.</p>
+
+        <h2>Modo de Uso</h2>
+        <ol>
+            <li>Solicitar el token de su aplicación.
+                <code>Debe de enviar el dominio al que responde su aplicación</code>
+            </li>
+            <li>Agregar en los headers de la Aplicación 
+                <pre>
+                <code>
+                    headers: {
+                        'Origin': 'https://dominio.uho.edu.cu',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'Authorization': 'AGA token'
+                    }
+                </code>
+                </pre>
+            </li>
+        </ol>
+
+        <h2>URLs disponibles</h2>
+        <ul>
+            <li><code>/</code>
+                <ul>
+                    <li>Documentación del AGA_AUTH</li>
+                    <li>Login de prueba</li>
+                </ul>
+            </li>
+            <li><code>/login</code>
+                <ul>
+                    <li>Esta URL es para iniciar sesión en el sistema, debe enviar BODY en formato raw con
+                        application/json por método POST:</li>
+                    <pre><code>{
+    "username": "$val1",
+    "password": "$val2"
+}</code></pre>
+                    <li><code>$val1</code> <em>Specify the user</em></li>
+                    <li><code>$val2</code> <em>Type the password in plain text</em></li>
+                    <li>La salida es un JSON:</li>
+                    <pre><code>{
+    "OK": true,
+    "activeUser": {
+        "status": 200,
+        "account_state": "TRUE|FALSE",
+        "uid": "usuario",
+        "personal_information": {
+            "dni": "",
+            "cn": "Nombre completo",
+            "given_name": "Nombre",
+            "sn": "Apellidos",
+            "PersonalPhoto": "base64",
+            "Overlapping": "base64"
+        },
+        "account_info": {
+            "user_type": "Institucional|Trabajadores|Estudiantes",
+            "expire_date": "",
+            "description": "",
+            "title": "",
+            "initials": "update",
+            "create_user": "[user]",
+            "create_date": "2022-10-22 02:02:12 am",
+            "modify_user": "user",
+            "modify_data": "2022-10-22 03:35:08 am",
+            "password": {
+                "user_password_set": "2022-10-22 03:35:08 am",
+                "pass_valid": "Expirado",
+                "pass_set": "191"
+            }
+        },
+        "message": "success"
+    }
+}</code></pre>
+                    <li>Estados</li>
+                    <ul>
+                        <li><code>200</code> <em>success</em></li>
+                        <li><code>401</code> <em>Credenciales incorrectas</em></li>
+                        <li><code>409</code> <em>Format error in user or password</em></li>
+                        <li><code>500</code> <em>could not login</em></li>
+                    </ul>
+                </ul>
+            </li>
+            <li><code>/logout</code>
+                <ul>
+                    <li>Esta URL es para cerrar sesión en el sistema, método POST</li>
+                    <li>Salida</li>
+                    <pre><code>{
+    "message": "success|false"
+}</code></pre>
+                    <li>Status</li>
+                    <ul>
+                        <li><code>200</code> <em>Success</em></li>
+                        <li><code>401</code> <em>Error</em></li>
+                    </ul>
+                </ul>
+            </li>
+            <li><code>/active</code>
+                <ul>
+                    <li>Devuelve los datos del usuario conectado con la estructura de <code>activeUser</code></li>
+                </ul>
+            </li>
+        </ul>
+
+        <h1>Login de prueba</h1>
+        <div style="align-items: center; align-content: center;">
+            <div class="container" id="loginContainer">
+                <img src="./logoAGA.png" width="300px">
+                <div class="input-field">
+                    <label for="username">Usuario</label>
+                    <input id="username" type="text">
+                </div>
+                <div class="input-field">
+                    <label for="password">Contrase&ntilde;a</label>
+                    <input id="password" type="password">
+                </div>
+                <button id="loginButton" class="btn">Acceder</button>
+            </div>
+            <div class="container" id="responseContainer" style="display: none; text-align: center;">
+                <img src="./logoAGA.png" width="300px">
+                <img id="personalPhoto" alt="Personal Photo" style="width: 50%; border-radius: 50%;">
+                <p id="cn_name" style="color: #fff;"></p>
+                <pre id="response" style="color: #000; text-align: left;"></pre>
+                <button id="logoutButton" class="btn logout">Salir</button>
+            </div>
         </div>
-        <div class="input-field">
-            <label for="password">Contrase&ntilde;a</label>
-            <input id="password" type="password">
-        </div>
-        <button id="loginButton" class="btn">Acceder</button>
     </div>
-    <div class="container" id="responseContainer" style="display: none; text-align: center;">
-        <img src="./logoAGA.png" width="300px">
-        <img id="personalPhoto" alt="Personal Photo" style="width: 50%; border-radius: 50%;">
-        <p id="cn_name" style="color: #fff;"></p>
-        <pre id="response" style="color: #000; text-align: left;"></pre>
-        <button id="logoutButton" class="btn logout">Salir</button>
-    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const url = 'https://auth.uho.edu.cu/active';
