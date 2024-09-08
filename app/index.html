@@ -9,7 +9,7 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
             background-color: #F3F4F6;
-            display: flex;
+            display: block;
             justify-content: center;
             align-items: center;
             /* height: 100vh; */
@@ -29,7 +29,7 @@
             padding: 20px;
             border: 1px solid #e1e4e8;
             border-radius: 10px;
-            width: 90%;
+            width: 100%;
         }
 
         h1 {
@@ -104,7 +104,7 @@
             <li>Solicitar el token de su aplicación.
                 <code>Debe de enviar el dominio al que responde su aplicación</code>
             </li>
-            <li>Agregar en los headers de la Aplicación 
+            <li>Agregar en los headers de la Aplicación
                 <pre>
                 <code>
                     headers: {
@@ -134,8 +134,6 @@
     "username": "$val1",
     "password": "$val2"
 }</code></pre>
-                    <li><code>$val1</code> <em>Specify the user</em></li>
-                    <li><code>$val2</code> <em>Type the password in plain text</em></li>
                     <li>La salida es un JSON:</li>
                     <pre><code>{
     "OK": true,
@@ -172,10 +170,10 @@
 }</code></pre>
                     <li>Estados</li>
                     <ul>
-                        <li><code>200</code> <em>success</em></li>
+                        <li><code>200</code> <em>Ok</em></li>
                         <li><code>401</code> <em>Credenciales incorrectas</em></li>
-                        <li><code>409</code> <em>Format error in user or password</em></li>
-                        <li><code>500</code> <em>could not login</em></li>
+                        <li><code>409</code> <em>Error de formato al enviar el usuario o la contraseña</em></li>
+                        <li><code>500</code> <em>No se pudo iniciar sesión</em></li>
                     </ul>
                 </ul>
             </li>
@@ -199,30 +197,33 @@
                 </ul>
             </li>
         </ul>
-
-        <h1>Login de prueba</h1>
-        <div style="align-items: center; align-content: center;">
-            <div class="container" id="loginContainer">
-                <img src="./logoAGA.png" width="300px">
-                <div class="input-field">
-                    <label for="username">Usuario</label>
-                    <input id="username" type="text">
-                </div>
-                <div class="input-field">
-                    <label for="password">Contrase&ntilde;a</label>
-                    <input id="password" type="password">
-                </div>
-                <button id="loginButton" class="btn">Acceder</button>
-            </div>
-            <div class="container" id="responseContainer" style="display: none; text-align: center;">
-                <img src="./logoAGA.png" width="300px">
-                <img id="personalPhoto" alt="Personal Photo" style="width: 50%; border-radius: 50%;">
-                <p id="cn_name" style="color: #fff;"></p>
-                <pre id="response" style="color: #000; text-align: left;"></pre>
-                <button id="logoutButton" class="btn logout">Salir</button>
-            </div>
-        </div>
     </div>
+
+    <h1>Login de prueba</h1>
+
+    <div class="container" id="loginContainer" style="position: relative; left: 40%;">
+        <img src="./logoAGA.png" width="300px">
+        <form onsubmit="login(); return false;">
+            <div class="input-field">
+                <label for="username">Usuario</label>
+                <input id="username" type="text">
+            </div>
+            <div class="input-field">
+                <label for="password">Contraseña</label>
+                <input id="password" type="password">
+            </div>
+            <button type="submit" id="loginButton" class="btn">Acceder</button>
+        </form>
+    </div>
+    <div class="container" id="responseContainer" style="position: relative; left: 40%;">
+        <img src="./logoAGA.png" width="300px">
+        <img id="personalPhoto" alt="" style="position: relative; left: 25%; width: 50%; border-radius: 50%;">
+        <p id="cn_name" style="color: #fff;"></p>
+        <pre id="response" style="color: #000; text-align: left;"></pre>
+        <button id="logoutButton" class="btn logout">Salir</button>
+    </div>
+
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -233,7 +234,7 @@
                     'Origin': 'https://auth.uho.edu.cu',
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
-                    'Authorization': 'AGA a861eb759f1628a59d0da222225939a2'
+                    'Authorization': 'AGA 3185da79077acfaff40445b4365b4574'
                 }
             })
                 .then(response => {
@@ -260,12 +261,11 @@
                 });
         });
 
-        document.getElementById('loginButton').addEventListener('click', function () {
+        function login() {
             const url = 'https://auth.uho.edu.cu/login';
             const data = {
                 username: document.getElementById('username').value,
                 password: document.getElementById('password').value,
-                code: '302444'
             };
 
             fetch(url, {
@@ -274,7 +274,7 @@
                     'Origin': 'https://auth.uho.edu.cu',
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
-                    'Authorization': 'AGA a861eb759f1628a59d0da222225939a2'
+                    'Authorization': 'AGA 3185da79077acfaff40445b4365b4574'
                 },
                 body: JSON.stringify(data)
             })
@@ -291,13 +291,11 @@
                 .catch(error => {
                     document.getElementById('response').textContent = 'Error: ' + error;
                 });
-        });
+        }
 
         document.getElementById('logoutButton').addEventListener('click', function () {
             const url = 'https://auth.uho.edu.cu/logout';
-            const data = {
-                code: '302444'
-            };
+            const data = {};
 
             fetch(url, {
                 method: 'POST',
@@ -305,7 +303,7 @@
                     'Origin': 'https://auth.uho.edu.cu',
                     'Content-Type': 'application/json',
                     'Accept': 'application/json',
-                    'Authorization': 'AGA a861eb759f1628a59d0da222225939a2'
+                    'Authorization': 'AGA 3185da79077acfaff40445b4365b4574'
                 },
                 body: JSON.stringify(data)
             })
@@ -320,6 +318,7 @@
                 });
         });
     </script>
+
 </body>
 
 </html>
