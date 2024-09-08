@@ -27,19 +27,19 @@ jobs:
       - name: Build
         run: sudo go build -trimpath -o aga_auth main.go
       
-      # - name: Create Release
-      #   id: create_release
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
-      #   with:
-      #     tag_name: ${{ github.ref }}
-      #     release_name: Release ${{ github.ref }}
-      #     body: |
-      #       ## AGA_AUTH - AUTENTICATOR
-      #       - Initial release of AUTH
-      #     draft: false
-      #     prerelease: false
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            ## Changes
+            - Initial release of AGA Auth
+          draft: false
+          prerelease: false
       
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
@@ -50,8 +50,3 @@ jobs:
           asset_path: ./aga_auth
           asset_name: aga_auth
           asset_content_type: application/octet-stream
-
-
-
-
-
