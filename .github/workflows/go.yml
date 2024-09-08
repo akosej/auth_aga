@@ -1,8 +1,7 @@
 on:
   push:
     # Sequence of patterns matched against refs/tags
-    tags:
-      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+    branches: [ "main" ]
 
 name: Create Release
 
@@ -26,20 +25,26 @@ jobs:
               
       - name: Build
         run: sudo go build -trimpath -o aga_auth main.go
-      
+
+      - name: Create Tag
+        id: create_tag
+        run: |
+          TAG_NAME=$(date +'%Y%m%d%H%M%S')
+          echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV 
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
+          tag_name: ${{ env.TAG_NAME }}
+          release_name: Compiler ${{ env.TAG_NAME }}
           body: |
             ## Changes
             - Initial release of AGA Auth
           draft: false
-          prerelease: false
+          prerelease: true
       
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
